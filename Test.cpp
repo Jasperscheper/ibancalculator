@@ -61,7 +61,6 @@ void FindPrimesThreaded(int start, int end, int numThreads)
         if (t.joinable()) {
             t.join();
         }
-            
     }
 
 

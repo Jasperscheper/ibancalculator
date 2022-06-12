@@ -81,8 +81,6 @@ void checkIbans(int b, int e, int m, int p, int u, int s)
     std::vector<std::thread> threads;
 
     int totalItems = e - b;
-    int blockStart = b;
-
     int threadSpread = totalItems / p;
     int startIndex = b;
     int endIndex = startIndex + threadSpread; 
@@ -97,6 +95,7 @@ void checkIbans(int b, int e, int m, int p, int u, int s)
         // thread 1: 7 items
         // thread 2: 7 items
         // thread 3: 6 items
+
         if(rest > 0)
         {
             endIndex +=1;
