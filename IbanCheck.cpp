@@ -11,9 +11,8 @@
 
 std::mutex ibanLock;
 std::vector<int> validnrs;
+bool stop_threads = false;
 
-
-std::atomic_bool stop_threads = false;
 int validNumCount =0;
 int numCount = 1;
 bool checkIban(int ibannr, int m)
@@ -39,7 +38,6 @@ bool checkIban(int ibannr, int m)
 // b: start range
 // e: end range
 // m: modulus
-// p: thread count.
 // u: modus
 // s optional find number.
 
@@ -54,8 +52,12 @@ void _checkIban(int b, int e, int m, int u, int s)
         }
 
         if(u == 2)
-        {
-            
+        {   
+            // this is inefficient, @Gert we had email contact about this (13-06-2022)
+            if(i == s)
+            {
+                std::cout << i << "is" << (checkIban(s, m) ? "valid" : "invalid");
+            }
         }
 
         if(checkIban(i, m)){
@@ -75,6 +77,12 @@ void _checkIban(int b, int e, int m, int u, int s)
     }
 }
 
+// b: start range
+// e: end range
+// m: modulus
+// p: thread count.
+// u: modus
+// s optional find number.
 void checkIbans(int b, int e, int m, int p, int u, int s)
 {
 
@@ -125,11 +133,11 @@ int main () {
     
     // assign thread
     const unsigned int maxThreads = std::thread::hardware_concurrency() * 2;
+    auto startTimeMulti = std::chrono::high_resolution_clock::now();
+    checkIbans(274856170, 274856190, 11, maxThreads, 0, 0);
+    auto endTimeMulti = std::chrono::high_resolution_clock::now();
 
-    auto startTime = std::chrono::high_resolution_clock::now();
-    checkIbans(274856170, 274856190, 11, maxThreads, 1, 0);
-    auto endTime = std::chrono::high_resolution_clock::now();
-    std::cout << "Single thread: " << std::chrono::duration<double, std::milli>(endTime-startTime).count() << "ms\n";
+    std::cout << "multithread duration time: " << std::chrono::duration<double, std::milli>(endTimeMulti-startTimeMulti).count() << "ms\n";
     
     return 0;
 }
